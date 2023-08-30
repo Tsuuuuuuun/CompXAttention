@@ -269,7 +269,8 @@ class MoleculeDataset(Dataset):
             return [print(smiles) for d in self._data for smiles in d.smiles]
 
         return [d.smiles for d in self._data]
-
+    
+    '''
     def sequences(self, flatten: bool = False) -> Union[List[str], List[List[str]]]:
         """
         Returns a list containing the SMILES list associated with each :class:`MoleculeDatapoint`.
@@ -281,6 +282,7 @@ class MoleculeDataset(Dataset):
             return [sequences for d in self._data for sequences in d.sequences]
 
         return [d.sequences for d in self._data]
+    '''
 
     def mols(self, flatten: bool = False) -> Union[List[Chem.Mol], List[List[Chem.Mol]], List[Tuple[Chem.Mol, Chem.Mol]], List[List[Tuple[Chem.Mol, Chem.Mol]]]]:
         """
