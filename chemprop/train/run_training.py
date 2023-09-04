@@ -146,7 +146,8 @@ def run_training(args: TrainArgs,
     loss_func = get_loss_func(args)
 
     # Set up test set evaluation
-    test_smiles, test_sequences, test_targets = test_data.smiles(),test_data.sequences(), test_data.targets()
+    # test_smiles, test_sequences, test_targets = test_data.smiles(),test_data.sequences(), test_data.targets()
+    test_smiles, test_targets = test_data.smiles(), test_data.targets()
 
     if args.dataset_type == 'multiclass':
         sum_test_preds = np.zeros((len(test_smiles), args.num_tasks, args.multiclass_num_classes))

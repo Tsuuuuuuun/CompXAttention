@@ -30,28 +30,34 @@ def predict(model: InteractionModel,
     for batch in tqdm(data_loader, disable=disable_progress_bar, leave=False):
         # Prepare batch
         batch: MoleculeDataset
-        mol_batch, features_batch, protein_sequence_batch, atom_descriptors_batch, atom_features_batch, bond_features_batch, add_feature = \
-            batch.batch_graph(), batch.features(),batch.sequences(), batch.atom_descriptors(), batch.atom_features(), batch.bond_features(), batch.add_features()
+        # mol_batch, features_batch, protein_sequence_batch, atom_descriptors_batch, atom_features_batch, bond_features_batch, add_feature = \
+        #    batch.batch_graph(), batch.features(),batch.sequences(), batch.atom_descriptors(), batch.atom_features(), batch.bond_features(), batch.add_features()
+        mol_batch, features_batch, atom_descriptors_batch, atom_features_batch, bond_features_batch, add_feature = \
+            batch.batch_graph(), batch.features(), batch.atom_descriptors(), batch.atom_features(), batch.bond_features(), batch.add_features()
 
-        dummy_array = [0]*args.sequence_length
-        sequence_2_ar = [list(tokenizer.encode(list(t[0]))) + dummy_array for t in protein_sequence_batch]
+        # dummy_array = [0]*args.sequence_length
+        # sequence_2_ar = [list(tokenizer.encode(list(t[0]))) + dummy_array for t in protein_sequence_batch]
         
-        new_ar = []
+        # new_ar = []
 
-        for arr in sequence_2_ar:
-            while len(arr)>args.sequence_length:
-                arr.pop(len(arr)-1)
-            new_ar.append(np.zeros(args.sequence_length)+np.array(arr))
+        # for arr in sequence_2_ar:
+        #    while len(arr)>args.sequence_length:
+        #        arr.pop(len(arr)-1)
+        #    new_ar.append(np.zeros(args.sequence_length)+np.array(arr))
         
         # convert list_sequence to tensor
-        sequence_tensor = torch.LongTensor(new_ar)
+        # sequence_tensor = torch.LongTensor(new_ar)
         add_feature = torch.Tensor(add_feature)
 
         # Make predictions
-        with torch.no_grad():
-            batch_preds  = model(mol_batch,sequence_tensor, add_feature, features_batch, atom_descriptors_batch, atom_features_batch, bond_features_batch)
-        batch_preds = batch_preds.data.cpu().numpy()
+        
+        # with torch.no_grad():
+        #     batch_preds  = model(mol_batch,sequence_tensor, add_feature, features_batch, atom_descriptors_batch, atom_features_batch, bond_features_batch)
+        # batch_preds = batch_preds.data.cpu().numpy()
 
+        with torch.no_grad():
+            batch_preds  = model(mol_batch, add_feature, features_batch, atom_descriptors_batch, atom_features_batch, bond_features_batch)
+        batch_preds = batch_preds.data.cpu().numpy()
         # Inverse scale if regression
         if scaler is not None:
             batch_preds = scaler.inverse_transform(batch_preds)

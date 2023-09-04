@@ -184,7 +184,7 @@ class InteractionModel(nn.Module):
 
     def forward(self,
                 batch: Union[List[List[str]], List[List[Chem.Mol]], List[List[Tuple[Chem.Mol, Chem.Mol]]], List[BatchMolGraph]],
-                sequence_tensor: List[np.ndarray] = None,
+                # sequence_tensor: List[np.ndarray] = None,
                 add_feature: List[np.ndarray] = None,
                 features_batch: List[np.ndarray] = None,
                 atom_descriptors_batch: List[np.ndarray] = None,
@@ -213,31 +213,31 @@ class InteractionModel(nn.Module):
                                        atom_features_batch, bond_features_batch))
 
         #protein feature extraction
-        sequence = sequence_tensor.cuda()
-        embedded_xt = self.embedding_xt(sequence)
-        input_nn = self.conv_in(embedded_xt)
+        # sequence = sequence_tensor.cuda()
+        # embedded_xt = self.embedding_xt(sequence)
+        # input_nn = self.conv_in(embedded_xt)
 
-        conv_input = input_nn.permute(0, 2, 1)
+        # conv_input = input_nn.permute(0, 2, 1)
 
-        for i, conv in enumerate(self.convs):
+        # for i, conv in enumerate(self.convs):
 
-            conved = self.norm(conv(conv_input))
+        #    conved = self.norm(conv(conv_input))
 
-            conved = F.glu(conved, dim=1)
+        #    conved = F.glu(conved, dim=1)
 
-            conved = conved + self.scale*conv_input
+        #    conved = conved + self.scale*conv_input
 
-            conv_input = conved
+        #    conv_input = conved
 
-        out_conv = self.relu(conved)
+        # out_conv = self.relu(conved)
         # Flatten protein
-        protein_tensor = out_conv.view(out_conv.size(0),out_conv.size(1)*out_conv.size(2))
+        # protein_tensor = out_conv.view(out_conv.size(0),out_conv.size(1)*out_conv.size(2))
         # 1D Protein feature
-        protein_tensor = self.do(self.relu(self.fc1_xt(self.normalization(protein_tensor))))
+        # protein_tensor = self.do(self.relu(self.fc1_xt(self.normalization(protein_tensor))))
         # 1D Morgan feature
         add_feature = self.do(self.relu(self.fc_mg(add_feature.cuda())))
         # Cross attention blocks
-        output = self.CAB(mpnn_out,add_feature,protein_tensor)
+        output = self.CAB(mpnn_out,add_feature)
         # Output
         output = self.ffn(output)
 

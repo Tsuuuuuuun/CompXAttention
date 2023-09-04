@@ -77,6 +77,7 @@ class CrossAttentionBlock(nn.Module):
         super(CrossAttentionBlock, self).__init__()
         self.att = AttentionBlock(hid_dim = args.hidden_size, n_heads = 1, dropout=args.dropout)
 
+    
     # def forward(self,graph_feature,morgan_feature,sequence_feature):
     def forward(self,graph_feature,morgan_feature):
         """
@@ -86,12 +87,10 @@ class CrossAttentionBlock(nn.Module):
         """
         # cross attention for compound information enrichment
         graph_feature = graph_feature + self.att(morgan_feature,graph_feature,graph_feature)
-        '''
         # self-attention
-        graph_feature = self.att(graph_feature,graph_feature,graph_feature)
+        # graph_feature = self.att(graph_feature,graph_feature,graph_feature)
         # cross-attention for interaction
-        output = self.att(graph_feature, sequence_feature,sequence_feature)
-        '''
+        # output = self.att(graph_feature, sequence_feature,sequence_feature)
 
-        # return output
+        #return output
         return graph_feature

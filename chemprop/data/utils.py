@@ -257,13 +257,14 @@ def get_data(path: str,
                 ignore_columns=ignore_columns,
             )
         # print('print(target_columns)',target_columns)
-        all_smiles, all_proteins,all_targets, all_rows, all_features, all_weights = [], [], [], [], [] ,[]
+        # all_smiles, all_proteins,all_targets, all_rows, all_features, all_weights = [], [], [], [], [] ,[]
+        all_smiles,all_targets, all_rows, all_features, all_weights = [], [], [], [], []
         for i, row in enumerate(tqdm(reader)):
             # print('row',row)
             # print(smiles_columns)
             
             smiles = [row[c] for c in smiles_columns]
-            proteins = [row['sequence']]
+            # proteins = [row['sequence']]
             # print(smiles)
             # input()
             targets = [float(row[column]) if row[column] != '' else None for column in target_columns]
@@ -274,7 +275,7 @@ def get_data(path: str,
 
             all_smiles.append(smiles)
             all_targets.append(targets)
-            all_proteins.append(proteins)
+            # all_proteins.append(proteins)
 
             if features_data is not None:
                 all_features.append(features_data[i])
@@ -311,7 +312,7 @@ def get_data(path: str,
         data = MoleculeDataset([
             MoleculeDatapoint(
                 smiles=smiles,
-                sequences = sequences,
+                # sequences = sequences,
                 targets=targets,
                 row=all_rows[i] if store_row else None,
                 data_weight=all_weights[i] if data_weights is not None else 1.,
@@ -322,7 +323,8 @@ def get_data(path: str,
                 bond_features=bond_features[i] if bond_features is not None else None,
                 overwrite_default_atom_features=args.overwrite_default_atom_features if args is not None else False,
                 overwrite_default_bond_features=args.overwrite_default_bond_features if args is not None else False
-            ) for i, (smiles,sequences, targets) in tqdm(enumerate(zip(all_smiles,all_proteins,all_targets)),total=len(all_smiles))
+            # ) for i, (smiles,sequences, targets) in tqdm(enumerate(zip(all_smiles,all_proteins,all_targets)),total=len(all_smiles))
+            ) for i, (smiles, targets) in tqdm(enumerate(zip(all_smiles,all_targets)),total=len(all_smiles))
         ])
 
     # Filter out invalid SMILES

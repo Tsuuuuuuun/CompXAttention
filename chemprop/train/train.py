@@ -44,9 +44,15 @@ def train(model: InteractionModel,
 
     for batch in tqdm(data_loader, total=len(data_loader), leave=False):
         # Prepare batch
+        '''
         batch: MoleculeDataset
         mol_batch, features_batch, target_batch, protein_sequence_batch, atom_descriptors_batch, atom_features_batch, bond_features_batch, data_weights_batch, add_feature = \
             batch.batch_graph(), batch.features(), batch.targets(), batch.sequences(), batch.atom_descriptors(), \
+            batch.atom_features(), batch.bond_features(), batch.data_weights(), batch.add_features()
+        '''
+        batch: MoleculeDataset
+        mol_batch, features_batch, target_batch, atom_descriptors_batch, atom_features_batch, bond_features_batch, data_weights_batch, add_feature = \
+            batch.batch_graph(), batch.features(), batch.targets(), batch.atom_descriptors(), \
             batch.atom_features(), batch.bond_features(), batch.data_weights(), batch.add_features()
         mask = torch.Tensor([[x is not None for x in tb] for tb in target_batch])
         mask_weight = torch.Tensor([[args.alpha if list(args.tau)[0]<=x<= list(args.tau)[1] else args.beta for x in tb] for tb in target_batch])
@@ -58,21 +64,24 @@ def train(model: InteractionModel,
         data_weights = torch.Tensor(data_weights_batch).unsqueeze(1)
         # Run model
         model.zero_grad()
-        dummy_array = [0]*args.sequence_length
+        
+        # dummy_array = [0]*args.sequence_length
 
-        sequence_2_ar = [list(tokenizer.encode(list(t[0]))) + dummy_array for t in protein_sequence_batch]
-        new_ar = []
+        # sequence_2_ar = [list(tokenizer.encode(list(t[0]))) + dummy_array for t in protein_sequence_batch]
+        # new_ar = []
 
-        for arr in sequence_2_ar:
-            while len(arr)>args.sequence_length:
-                arr.pop(len(arr)-1)
-            # print(len(arr)
-            new_ar.append(np.zeros(args.sequence_length)+np.array(arr))
+        # for arr in sequence_2_ar:
+        #     while len(arr)>args.sequence_length:
+        #         arr.pop(len(arr)-1)
+        #     # print(len(arr)
+        #     new_ar.append(np.zeros(args.sequence_length)+np.array(arr))
         
         # convert list_sequence to tensor
-        sequence_tensor = torch.LongTensor(new_ar)
+        # sequence_tensor = torch.LongTensor(new_ar)
+        
         add_feature = torch.Tensor(add_feature)
-        preds = model(mol_batch, sequence_tensor, add_feature,features_batch, atom_descriptors_batch, atom_features_batch, bond_features_batch)
+        # preds = model(mol_batch, sequence_tensor, add_feature,features_batch, atom_descriptors_batch, atom_features_batch, bond_features_batch)
+        preds = model(mol_batch, add_feature,features_batch, atom_descriptors_batch, atom_features_batch, bond_features_batch)
 
         # Move tensors to correct device
         mask = mask.to(preds.device)

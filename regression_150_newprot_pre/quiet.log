@@ -1,0 +1,34 @@
+Fold 0
+Model 0 best validation mse = 0.118391 on epoch 87
+Model 0 test mse = 0.184299
+Model 1 best validation mse = 0.298454 on epoch 4
+Model 1 test mse = 0.189662
+Model 2 best validation mse = 0.437936 on epoch 25
+Model 2 test mse = 0.900766
+Ensemble test mse = 0.217575
+1-fold cross validation
+	Seed 0 ==> test mse = 0.217575
+Overall test mse = 0.217575 +/- 0.000000
+Overall test Cindex = 0.666667 +/- 0.000000 
+Elapsed time = 0:01:15
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Model 0 best validation mse = 0.003236 on epoch 28
+Model 0 test mse = 0.048141
+Model 1 best validation mse = 0.004130 on epoch 16
+Model 1 test mse = 0.048798
+Model 2 best validation mse = 0.003490 on epoch 45
+Model 2 test mse = 0.118915
+Ensemble test mse = 0.060204
+1-fold cross validation
+	Seed 0 ==> test mse = 0.060204
+Overall test mse = 0.060204 +/- 0.000000
+Overall test Cindex = 0.500000 +/- 0.000000 
+Elapsed time = 0:00:46
