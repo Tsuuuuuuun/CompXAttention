@@ -71,39 +71,42 @@ def hyperopt(args: HyperoptArgs) -> None:
         logger.info(hyperparams)
 
         # Cross validate
-        mean_score, std_score = cross_validate(args=hyper_args, train_func=run_training)
+        mean_score, std_score, best_score = cross_validate(args=hyper_args, train_func=run_training)
 
         # Record results
         temp_model = InteractionModel(hyper_args)
         num_params = param_count(temp_model)
         logger.info(f'num params: {num_params:,}')
-        logger.info(f'{mean_score} +/- {std_score} {hyper_args.metric}')
+        logger.info(f'{best_score} {hyper_args.metric}')
 
         results.append({
             'mean_score': mean_score,
             'std_score': std_score,
             'hyperparams': hyperparams,
-            'num_params': num_params
+            'num_params': num_params,
+            'best_score': best_score
         })
 
         # Deal with nan
         if np.isnan(mean_score):
             if hyper_args.dataset_type == 'classification':
-                mean_score = 0
+                best_score = 0
             else:
                 raise ValueError('Can\'t handle nan score for non-classification dataset.')
 
-        return (1 if hyper_args.minimize_score else -1) * mean_score
+        # return (1 if hyper_args.minimize_score else -1) * mean_score
+        return (1 if hyper_args.minimize_score else -1) * best_score
 
     fmin(objective, SPACE, algo=tpe.suggest, max_evals=args.num_iters, rstate=np.random.RandomState(args.seed))
 
     # Report best result
-    results = [result for result in results if not np.isnan(result['mean_score'])]
-    best_result = min(results, key=lambda result: (1 if args.minimize_score else -1) * result['mean_score'])
+    results = [result for result in results if not np.isnan(result['best_score'])]
+    best_result = min(results, key=lambda result: (1 if args.minimize_score else -1) * result['best_score'])
     logger.info('best')
     logger.info(best_result['hyperparams'])
     logger.info(f'num params: {best_result["num_params"]:,}')
-    logger.info(f'{best_result["mean_score"]} +/- {best_result["std_score"]} {args.metric}')
+    logger.info(f'best validation {args.metric}: {best_result["best_score"]:.6f}')
+    logger.info(f'{best_result["best_score"]} {args.metric}')
 
     # Save best hyperparameter settings as JSON config file
     makedirs(args.config_save_path, isfile=True)

@@ -22,10 +22,11 @@ from chemprop.utils import build_optimizer, build_lr_scheduler, get_loss_func, l
     save_checkpoint, save_smiles_splits, load_frzn_model
 from .lamb import Lamb
 from lifelines.utils import concordance_index
-def run_training(args: TrainArgs,
-                 data: MoleculeDataset,
-                 logger: Logger = None,
-                 tokenizer = None) -> Dict[str, List[float]]:
+
+def run_optimizing(args: TrainArgs,
+                   data: MoleculeDataset,
+                   logger: Logger = None,
+                   tokenizer = None) -> Dict[str, List[float]]:
     """
     Loads data, trains a Chemprop model, and returns test scores for the model checkpoint with the highest validation score.
 
@@ -359,4 +360,4 @@ def run_training(args: TrainArgs,
 
         test_preds_dataframe.to_csv(os.path.join(args.save_dir, 'test_preds.csv'), index=False)
 
-    return ensemble_scores, cindex, best_score
+    return best_score, cindex

@@ -17,5 +17,6 @@ __all__ = [
     'make_predictions',
     'predict',
     'run_training',
+    'run_optimizing',
     'train'
 ]

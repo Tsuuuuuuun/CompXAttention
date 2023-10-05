@@ -9,7 +9,7 @@ from typing import Callable, Dict, List, Tuple
 import numpy as np
 import pandas as pd
 
-from .run_training import run_training
+from chemprop.train import run_training
 from chemprop.args import TrainArgs
 from chemprop.constants import TEST_SCORES_FILE_NAME, TRAIN_LOGGER_NAME
 from chemprop.data import get_data, get_task_names, MoleculeDataset, validate_dataset_type
@@ -109,7 +109,7 @@ def cross_validate(args: TrainArgs,
                 model_scores = json.load(f)
         # Otherwise, train the models
         else:
-            model_scores,Cindex = train_func(args, data, logger, tokenizer)
+            model_scores,Cindex,best_score = train_func(args, data, logger, tokenizer)
         Cindexs.append(Cindex)
         for metric, scores in model_scores.items():
             all_scores[metric].append(scores)
@@ -172,7 +172,7 @@ def cross_validate(args: TrainArgs,
                                for fold_num in range(args.num_folds)])
         all_preds.to_csv(os.path.join(save_dir, 'test_preds.csv'), index=False)
 
-    return mean_score, std_score
+    return mean_score, std_score, best_score
 
 
 def chemprop_train() -> None:
